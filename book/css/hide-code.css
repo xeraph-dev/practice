@@ -1,0 +1,4 @@
+label:has(:not(input:checked)) {
+  font-weight: bold;
+  color: var(--sidebar-active);
+}
