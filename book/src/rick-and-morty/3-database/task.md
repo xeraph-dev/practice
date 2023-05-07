@@ -35,7 +35,7 @@ I will give you the database schema in an easy to understand format and you need
 - I prefer to use TEXT over VARCHAR(N) for simplicity. You can use VARCHAR(N) if you want.
 - The `INTEGER` type is also for simplicity. Maybe in the database of your choice you can define a more specific integer type like `byte` (`8` **bits**), `short` (`16` **bits**), etc... Use it if you want.
 - The [Users Table](#users-table) will not be used at this time, but will need to be defined to reference the fields (**created**|**updated**|**deleted**)**\_by** in the tables to be defined in this task. So we will define the minimal table (only id and metadata).
-- `Enums` in **SQLite** must be defined by creating a table and inserting the data after the table is created. In code it can be defined as its alternative in language.
+- `Enums` in **SQLite** must be defined by creating a table and inserting the data after the table is created or using the [CHECK constraints](https://www.sqlitetutorial.net/sqlite-check-constraint/). In code it can be defined as its alternative in language.
 - fields (**created**|**updated**|**deleted**)**\_**(**by**|**in**) are used as record metadata. It's good practice for all records to have these fields.
 - **deleted\_**(**by**|**in**) fields are used to know when the record was marked as deleted. It's good practice to never delete a record directly, just mark it as deleted, and if you really want to delete it, do it in a purge step.
 - the **from_api** field is only used for the synchronization process to know which record was imported from the original API and which was not.

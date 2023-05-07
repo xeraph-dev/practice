@@ -1,0 +1,3 @@
+[workspace]
+
+members = ["rick-and-morty/server"]

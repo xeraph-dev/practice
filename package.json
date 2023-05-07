@@ -1,0 +1,8 @@
+{
+  "name": "practice",
+  "dependencies": {
+    "prettier": "^2.8.8",
+    "prettier-plugin-sql": "^0.14.0",
+    "sql-formatter": "^12.2.0"
+  }
+}

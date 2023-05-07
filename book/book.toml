@@ -8,5 +8,5 @@ title = "Full-Stack Practice"
 [output.html]
 git-repository-url = "https://github.com/adrianrl99/practice"
 git-repository-icon = "fa-github"
-additional-js = ["./js/hide-code.js"]
+additional-js = ["./js/hide-code.js", "./js/tasks.js"]
 additional-css = ["./css/hide-code.css", "./css/table-fix.css"]
