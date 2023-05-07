@@ -1,0 +1,23 @@
+#users-table + .table-wrapper > table tr > *:first-child,
+#characters-table + .table-wrapper > table tr > *:first-child,
+#character-species-table + .table-wrapper > table tr > *:first-child,
+#character-types-table + .table-wrapper > table tr > *:first-child,
+#locations-table + .table-wrapper > table tr > *:first-child,
+#location-types-table + .table-wrapper > table tr > *:first-child,
+#location-dimensions-table + .table-wrapper > table tr > *:first-child,
+#episodes-table + .table-wrapper > table tr > *:first-child,
+#characters-episodes-table + .table-wrapper > table tr > *:first-child {
+  white-space: nowrap;
+}
+
+#users-table + .table-wrapper > table th:last-child,
+#characters-table + .table-wrapper > table th:last-child,
+#character-species-table + .table-wrapper > table th:last-child,
+#character-types-table + .table-wrapper > table th:last-child,
+#locations-table + .table-wrapper > table tr > *:last-child,
+#location-types-table + .table-wrapper > table tr > *:last-child,
+#location-dimensions-table + .table-wrapper > table tr > *:last-child,
+#episodes-table + .table-wrapper > table tr > *:last-child,
+#characters-episodes-table + .table-wrapper > table tr > *:last-child {
+  min-width: 25ch;
+}

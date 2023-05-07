@@ -78,7 +78,7 @@ episodes.map(c => {
 })
 
 console.log('')
-console.log('Characters stats')
+console.log('Characters stats', characters.length)
 console.table({
   'Names repeated': stats.characters.namesRepeated.size,
   'Name is Unique?': stats.characters.nameIsUnique,
@@ -97,7 +97,7 @@ console.table({
 
 console.log('----------------------------')
 
-console.log('Locations stats')
+console.log('Locations stats', locations.length)
 console.table({
   'Names repeated': stats.locations.namesRepeated.size,
   'Name is Unique?': stats.locations.nameIsUnique,
@@ -109,7 +109,7 @@ console.table({
 
 console.log('----------------------------')
 
-console.log('Episodes stats')
+console.log('Episodes stats', episodes.length)
 console.table({
   'Names repeated': stats.episodes.namesRepeated.size ?? 0,
   'Name is Unique?': stats.episodes.nameIsUnique,

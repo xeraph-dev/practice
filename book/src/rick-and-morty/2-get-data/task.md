@@ -21,6 +21,8 @@ As mentioned in the overview, we first need to clone the entire database. To do 
     - [ ] Species (useful to know if you need an enum or a table)
     - [ ] types (useful to know if you need an enum or a table)
     - [ ] Name is unique?
+    - [ ] Species name is unique?
+    - [ ] Type name is unique?
     - [ ] Status can be null?
     - [ ] Gender can be null?
     - [ ] Species can be null?
