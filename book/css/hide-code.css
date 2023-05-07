@@ -1,4 +1,8 @@
-label:has(:not(input:checked)) {
+label#hide-code:has(:not(input:checked)) {
   font-weight: bold;
   color: var(--sidebar-active);
+}
+
+:has(label#hide-code > input:checked) li.chapter-item:has(a[href$='/solution.html']) {
+  display: none;
 }
