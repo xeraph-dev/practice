@@ -71,7 +71,7 @@ Setup your database folder and create your first migration file
 | **_Foreign Key_** <br> [location](#locations-table).**id**                  | **location_id** | `INTEGER`                                    | `true`   | `false` |                     | The location of the character.                       |
 | **_Foreign Key_** <br> [location](#locations-table).**id**                  | **origin_id**   | `INTEGER`                                    | `true`   | `false` |                     | The origin location of the character.                |
 |                                                                             | **image**       | `TEXT`                                       | `false`  | `false` |                     | The image of the character                           |
-|                                                                             | **from_api**    | `BOOLEAN`                                    | `false`  | `false` | `false`             | If the data was optained from the original api       |
+|                                                                             | **from_api**    | `BOOLEAN`                                    | `false`  | `false` | `false`             | If the data was obtained from the original api       |
 | **_Foreign Key_** <br> [user](#users-table).**id**                          | **created_by**  | `INTEGER`                                    | `false`  | `false` |                     | The user that creates this record                    |
 | **_Foreign Key_** <br> [user](#users-table).**id**                          | **updated_by**  | `INTEGER`                                    | `false`  | `false` |                     | The user that updates this record                    |
 | **_Foreign Key_** <br> [user](#users-table).**id**                          | **deleted_by**  | `INTEGER`                                    | `true`   | `false` | `NULL`              | The user that deletes this record                    |
@@ -166,8 +166,8 @@ Setup your database folder and create your first migration file
 | -------------------------------------------------- | -------------- | ---------- | -------- | ------- | ------------------- | ---------------------------------------------------- |
 | **_Primary Key_**                                  | **id**         | `INTEGER`  | `false`  | `true`  |                     | The id of the episode                                |
 |                                                    | **name**       | `TEXT`     | `true`   | `false` |                     | The name of the episode                              |
-|                                                    | **season**     | `INTEGER`  | `false`  | `false` |                     | The season number                                    |
-|                                                    | **episode**    | `INTEGER`  | `false`  | `false` |                     | The episode number                                   |
+|                                                    | **season**     | `INTEGER`  | `false`  | `false` |                     | The season number of the episode                     |
+|                                                    | **episode**    | `INTEGER`  | `false`  | `false` |                     | The episode number of the episode                    |
 |                                                    | **air_date**   | `DateTime` | `false`  | `false` |                     | The air date of the episode                          |
 |                                                    | **from_api**   | `BOOLEAN`  | `false`  | `false` | `false`             | If the data was optained from the original api       |
 | **_Foreign Key_** <br> [user](#users-table).**id** | **created_by** | `INTEGER`  | `false`  | `false` |                     | The user that creates this record                    |
