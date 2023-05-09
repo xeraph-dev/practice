@@ -486,8 +486,6 @@ END;
 
 ## Script to populate the database
 
-Since SQLite has a utility to import from **csv**, I first convert the **json** files to **csv** files and with a bash script use the sqlite3 cli to populate the database.
-
 ### Setup script
 
 ```bash#!/bash
