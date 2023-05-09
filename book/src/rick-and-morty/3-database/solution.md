@@ -1,4 +1,4 @@
-# My Solution in SQL
+# My Solution in SQLite
 
 ## Some Important Observations
 
@@ -145,9 +145,9 @@ CREATE TABLE IF NOT EXISTS characters (
   status      TEXT    NOT NULL,                             -- The status of the character
   gender      TEXT    NOT NULL,                             -- The gender of the character
   species_id  INTEGER NOT NULL,                             -- The species of the character.
-  type_id     INTEGER NOT NULL,                             -- The type or subspecies of the character.
-  location_id INTEGER NOT NULL,                             -- The location of the character.
-  origin_id   INTEGER NOT NULL,                             -- The origin of the character.
+  type_id     INTEGER,                                      -- The type or subspecies of the character.
+  location_id INTEGER,                                      -- The location of the character.
+  origin_id   INTEGER,                                      -- The origin of the character.
   image       TEXT    NOT NULL,                             -- The image of the character
   from_api    BOOLEAN NOT NULL  DEFAULT false,              -- If the data was obtained from the original api
   created_by  INTEGER NOT NULL  DEFAULT 0,                  -- The user that creates this record
@@ -159,6 +159,7 @@ CREATE TABLE IF NOT EXISTS characters (
 
   CHECK (status = 'Alive'  OR status = 'Dead' OR status = 'unknown'),
   CHECK (gender = 'Female' OR gender = 'Male' OR gender = 'Genderless' OR gender = 'unknown'),
+  CHECK (from_api IN (false, true)),
   PRIMARY KEY (id),
   FOREIGN KEY (species_id)  REFERENCES character_species (id) ON DELETE RESTRICT,
   FOREIGN KEY (type_id)     REFERENCES character_types (id)   ON DELETE RESTRICT,
@@ -273,8 +274,8 @@ END;
 CREATE TABLE IF NOT EXISTS locations (
   id            INTEGER NOT NULL,                             -- The id of the location
   name          TEXT    NOT NULL,                             -- The name of the location
-  type_id       TEXT    NOT NULL,                             -- The type of the location
-  dimension_id  TEXT    NOT NULL,                             -- The dimension of the location
+  type_id       TEXT,                                         -- The type of the location
+  dimension_id  TEXT,                                         -- The dimension of the location
   from_api      BOOLEAN NOT NULL  DEFAULT false,              -- If the data was obtained from the original api
   created_by    INTEGER NOT NULL  DEFAULT 0,                  -- The user that creates this record
   updated_by    INTEGER NOT NULL  DEFAULT 0,                  -- The user that updates this record
@@ -454,6 +455,7 @@ CREATE TABLE IF NOT EXISTS characters_episodes (
   deleted_at    TEXT              DEFAULT NULL,               -- Time at which the record was deleted
 
   PRIMARY KEY (id),
+  UNIQUE(character_id, episode_id),
   FOREIGN KEY (character_id)  REFERENCES characters (id)  ON DELETE RESTRICT,
   FOREIGN KEY (episode_id)    REFERENCES episodes (id)    ON DELETE RESTRICT,
   FOREIGN KEY (created_by)    REFERENCES users (id)       ON DELETE RESTRICT,
@@ -488,23 +490,235 @@ Since SQLite has a utility to import from **csv**, I first convert the **json** 
 
 ### Setup script
 
-```bash
+```bash#!/bash
 DB_PATH="$(pwd)/$(dirname "$0")/database.db"
 SCHEMA_PATH="$(pwd)/$(dirname "$0")/schema.sql"
 
 if [ -f "$DB_PATH" ]; then rm "$DB_PATH"; fi
 if [ -f "$SCHEMA_PATH" ]; then sqlite3 "$DB_PATH" <"$SCHEMA_PATH"; fi
-
 ```
 
-### Generate **csv** files
+### Script to populate the database
+
+#### Base script file (imports, and db initialization)
 
 ```javascript
+import { DateTime } from 'luxon'
+import { dirname, join } from 'node:path'
+import { fileURLToPath } from 'node:url'
+import sqlite3 from 'sqlite3'
 
+import characters from './characters.json' assert { type: 'json' }
+import episodes from './episodes.json' assert { type: 'json' }
+import locations from './locations.json' assert { type: 'json' }
+
+const __dirname = dirname(fileURLToPath(import.meta.url))
+const db = new sqlite3.Database(join(__dirname, 'database.db'), err => {
+  if (err) return console.error(err.message)
+  console.log('Connected to the SQlite database.')
+})
+
+/**
+ * format date to sqlite ISO String with UTC time zone
+ * @param {string} date
+ * @returns {string}
+ */
+function formatDate(date) {
+  return DateTime.fromJSDate(new Date(date)).toUTC().toFormat('yyyy-LL-dd HH:mm:ss')
+}
+
+/**
+ * split episode string into [season, episode] object
+ * @param {string} str
+ * @returns {[number, number]}
+ */
+function parseEpisode(str) {
+  let season = ''
+  let episode = ''
+  let isSeason = false
+  let isEpisode = false
+  for (const c of str) {
+    if (c === 'S') isSeason = true
+    if (c === 'E') isEpisode = true
+    if (['S', 'E'].includes(c)) continue
+    if (isEpisode) episode += c
+    else if (isSeason) season += c
+  }
+
+  return [parseInt(season), parseInt(episode)]
+}
+
+// this is placed at the end of the file
+db.close(err => {
+  if (err) return console.error(err.message)
+  console.log('Close the database connection.')
+})
 ```
 
-### Populate the database
+#### Populate characters
 
-```bash
+```javascript
+;(function populateCharacters() {
+  const speciess = new Set()
+  const types = new Set()
+  /** @type {{[key: string]: string[]}} */
+  const episodes = {}
 
+  const rows = characters
+    .map(
+      ({ id, name, status, gender, species, type, origin, location, image, episode, created }) => {
+        if (species) speciess.add(species)
+        if (type) types.add(type)
+        episodes[id] = episode
+        return [
+          id,
+          JSON.stringify(name),
+          JSON.stringify(status),
+          JSON.stringify(gender),
+          [...speciess].indexOf(species),
+          type ? [...types].indexOf(type) + 1 : 'NULL',
+          location || 'NULL',
+          origin || 'NULL',
+          JSON.stringify(image),
+          +true, // from_api
+          JSON.stringify(formatDate(created)), // created_at
+        ].join(',')
+      }
+    )
+    .map(row => `(${row})`)
+    .join(',')
+
+  const speciesRow = [...speciess]
+    .map((name, index) => [index + 1, JSON.stringify(name)].join(','))
+    .map(row => `(${row})`)
+    .join(',')
+  const typesRows = [...types]
+    .map((name, index) => [index + 1, JSON.stringify(name)].join(','))
+    .map(row => `(${row})`)
+    .join(',')
+
+  const sqlSpecies = `INSERT INTO character_species (id, name) VALUES ${speciesRow} ON CONFLICT DO NOTHING;`
+  const sqlTypes = `INSERT INTO character_types (id, name) VALUES ${typesRows} ON CONFLICT DO NOTHING;`
+  const sql = `INSERT INTO characters (id,name,status,gender,species_id,type_id,location_id,origin_id,image,from_api,created_at) VALUES ${rows} ON CONFLICT DO NOTHING;`
+
+  db.run(sqlSpecies, function (err) {
+    if (err) return console.error(err.message)
+    console.log(`Character species rows inserted ${this.changes}`)
+  })
+
+  db.run(sqlTypes, function (err) {
+    if (err) return console.error(err.message)
+    console.log(`Character types rows inserted ${this.changes}`)
+  })
+
+  db.run(sql, function (err) {
+    if (err) return console.error(err.message)
+    console.log(`Characters rows inserted ${this.changes}`)
+  })
+
+  const episodesRows = Object.entries(episodes)
+    .map(([cid, eids]) => eids.map(eid => [cid, eid].join(',')).map(row => `(${row})`))
+    .join(',')
+
+  const sqlEpisodes = `INSERT INTO characters_episodes (character_id,episode_id) VALUES ${episodesRows} ON CONFLICT DO NOTHING;`
+
+  db.run(sqlEpisodes, function (err) {
+    if (err) return console.error(err.message)
+    console.log(`Characters episodes rows inserted ${this.changes}`)
+  })
+})()
+```
+
+#### Populate locations
+
+```javascript
+;(function populateLocations() {
+  const types = new Set()
+  const dimensions = new Set()
+
+  const rows = locations
+    .map(({ id, name, type, dimension, created }) => {
+      if (type) types.add(type)
+      if (dimension) dimensions.add(dimension)
+      return [
+        id,
+        JSON.stringify(name),
+        type ? [...types].indexOf(type) + 1 : 'NULL',
+        dimension ? [...dimensions].indexOf(dimension) + 1 : 'NULL',
+        +true, // from_api
+        JSON.stringify(formatDate(created)), // created_at
+      ].join(',')
+    })
+    .map(row => `(${row})`)
+    .join(',')
+
+  const typesRows = [...types]
+    .map((name, index) => [index + 1, JSON.stringify(name)].join(','))
+    .map(row => `(${row})`)
+    .join(',')
+  const dimensionsRows = [...dimensions]
+    .map((name, index) => [index + 1, JSON.stringify(name)].join(','))
+    .map(row => `(${row})`)
+    .join(',')
+
+  const sqlTypes = `INSERT INTO location_types (id, name) VALUES ${typesRows} ON CONFLICT DO NOTHING;`
+  const sqlDimensions = `INSERT INTO location_dimensions (id, name) VALUES ${dimensionsRows} ON CONFLICT DO NOTHING;`
+  const sql = `INSERT INTO locations (id,name,type_id,dimension_id,from_api,created_at) VALUES ${rows} ON CONFLICT DO NOTHING;`
+
+  db.run(sqlTypes, function (err) {
+    if (err) return console.error(err.message)
+    console.log(`Location types rows inserted ${this.changes}`)
+  })
+
+  db.run(sqlDimensions, function (err) {
+    if (err) return console.error(err.message)
+    console.log(`Location dimensions rows inserted ${this.changes}`)
+  })
+
+  db.run(sql, function (err) {
+    if (err) return console.error(err.message)
+    console.log(`Locations rows inserted ${this.changes}`)
+  })
+})()
+```
+
+#### Populate episodes
+
+```javascript
+;(function populateEpisodes() {
+  const rows = episodes
+    .map(({ id, name, episode: episodeString, air_date, created }) => {
+      const [season, episode] = parseEpisode(episodeString)
+      return [
+        id,
+        JSON.stringify(name),
+        season,
+        episode,
+        JSON.stringify(formatDate(air_date)),
+        +true, // from_api
+        JSON.stringify(formatDate(created)), // created_at
+      ].join(',')
+    })
+    .map(row => `(${row})`)
+    .join(',')
+
+  const sql = `INSERT INTO episodes (id,name,season,episode,air_date,from_api,created_at) VALUES ${rows} ON CONFLICT DO NOTHING;`
+  db.run(sql, function (err) {
+    if (err) return console.error(err.message)
+    console.log(`Episodes rows inserted ${this.changes}`)
+  })
+})()
+```
+
+#### Population process output
+
+```
+Character types rows inserted 169
+Character species rows inserted 10
+Location dimensions rows inserted 33
+Locations rows inserted 126
+Location types rows inserted 45
+Characters rows inserted 826
+Characters episodes rows inserted 1267
+Episodes rows inserted 51
 ```

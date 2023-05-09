@@ -1,5 +1,8 @@
 images
 characters.json
+characters.csv
 episodes.json
+episodes.csv
 locations.json
+locations.csv
 database.db

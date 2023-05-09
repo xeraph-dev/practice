@@ -40,6 +40,7 @@ I will give you the database schema in an easy to understand format and you need
 - **deleted\_**(**by**|**in**) fields are used to know when the record was marked as deleted. It's good practice to never delete a record directly, just mark it as deleted, and if you really want to delete it, do it in a purge step.
 - the **from_api** field is only used for the synchronization process to know which record was imported from the original API and which was not.
 - `DateTime` is not directly supported in **SQLite** and maybe some other databases. I recommend using the `TEXT` type in these cases.
+- Tables `Character (Species|Types)` and `Locations (Types|Dimensions)` are part of the normalization process.
 
 ### Initialize Database
 

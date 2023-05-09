@@ -59,9 +59,9 @@ CREATE TABLE IF NOT EXISTS characters (
   status      TEXT    NOT NULL,                             -- The status of the character
   gender      TEXT    NOT NULL,                             -- The gender of the character
   species_id  INTEGER NOT NULL,                             -- The species of the character.
-  type_id     INTEGER NOT NULL,                             -- The type or subspecies of the character.
-  location_id INTEGER NOT NULL,                             -- The location of the character.
-  origin_id   INTEGER NOT NULL,                             -- The origin of the character.
+  type_id     INTEGER,                                      -- The type or subspecies of the character.
+  location_id INTEGER,                                      -- The location of the character.
+  origin_id   INTEGER,                                      -- The origin of the character.
   image       TEXT    NOT NULL,                             -- The image of the character
   from_api    BOOLEAN NOT NULL  DEFAULT false,              -- If the data was obtained from the original api
   created_by  INTEGER NOT NULL  DEFAULT 0,                  -- The user that creates this record
@@ -182,8 +182,8 @@ END;
 CREATE TABLE IF NOT EXISTS locations (
   id            INTEGER NOT NULL,                             -- The id of the location
   name          TEXT    NOT NULL,                             -- The name of the location
-  type_id       TEXT    NOT NULL,                             -- The type of the location
-  dimension_id  TEXT    NOT NULL,                             -- The dimension of the location
+  type_id       TEXT,                                         -- The type of the location
+  dimension_id  TEXT,                                         -- The dimension of the location
   from_api      BOOLEAN NOT NULL  DEFAULT false,              -- If the data was obtained from the original api
   created_by    INTEGER NOT NULL  DEFAULT 0,                  -- The user that creates this record
   updated_by    INTEGER NOT NULL  DEFAULT 0,                  -- The user that updates this record
@@ -355,6 +355,7 @@ CREATE TABLE IF NOT EXISTS characters_episodes (
   deleted_at    TEXT              DEFAULT NULL,               -- Time at which the record was deleted
 
   PRIMARY KEY (id),
+  UNIQUE(character_id, episode_id),
   FOREIGN KEY (character_id)  REFERENCES characters (id)  ON DELETE RESTRICT,
   FOREIGN KEY (episode_id)    REFERENCES episodes (id)    ON DELETE RESTRICT,
   FOREIGN KEY (created_by)    REFERENCES users (id)       ON DELETE RESTRICT,
@@ -380,3 +381,29 @@ BEGIN
   SET updated_at = CURRENT_TIMESTAMP
   WHERE id = new.id;
 END;
+
+
+
+-- CREATE VIEW IF NOT EXISTS v_characters AS
+-- SELECT
+--   c.id,
+--   c.name,
+--   c.status,
+--   c.gender,
+--   c.species_id, cs.name AS species,
+--   c.type_id,    ct.name AS type,
+--   c.location_id l.name  AS location,
+--   c.origin_id,  o.name  AS origin,
+--   c.image,
+--   c.from_api,
+--   c.created_by,
+--   c.updated_by,
+--   c.deleted_by,
+--   c.created_at,
+--   c.updated_at,
+--   c.deleted_at
+-- FROM characters AS c
+-- INNER JOIN character_species AS cs WHERE id = c.species_id
+-- INNER JOIN character_types   AS ct WHERE id = c.type_id
+-- INNER JOIN locations AS l WHERE id = c.location_id
+-- INNER JOIN locations AS o WHERE id = c.origin_id;
