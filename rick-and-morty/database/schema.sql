@@ -1,88 +1,7 @@
-# My Solution in SQL
-
-## Some Important Observations
-
-> The users table cannot have `DEFAULT 0` in **(created|updated)\_by**, it will only be available to the rest of the table.
-> A user can only be created by another user, the **system** user only creates the first admin user.
-
-> Note that also as a good practice I define a **system** user with id `0`. This user should only be used in scripts or tools external to the project.
-> This user cannot be deleted, to prevent it I add a `TRIGGER`.
-
-> All references only restrict the delete action because a purge operation can cause some records to be orphaned.
-> The only **_safe_** way to purge a record is to purge all parents first.
-> An **_unsafe_** but effective way is to run the query `PRAGMA Foreign_keys = OFF` first, remember to set it to `ON` after your _**unsafe**_ operations.
-
-> SQLite doesn't have enums, so I use `CHECK` to define a set of allowed strings.
->
-> The `BOOLEAN` type is an alias to `INTEGER` that SQLite allows, it is also necessary to check if it is `false`\|`0` or `true` \| `1`.
-
-### Base table schema
-
-As a good practice, I decide to use this schema as the default table schema for all tables.
-
-```sql
-CREATE TABLE IF NOT EXISTS <table_name> (
-  id          INTEGER NOT NULL,                             -- The id of the <record_name>
-  created_by  INTEGER NOT NULL  DEFAULT 0,                  -- The user that creates this record
-  updated_by  INTEGER NOT NULL  DEFAULT 0,                  -- The user that updates this record
-  deleted_by  INTEGER           DEFAULT NULL,               -- The user that deletes this record
-  created_at  TEXT    NOT NULL  DEFAULT CURRENT_TIMESTAMP,  -- Time at which the record was created in the database
-  updated_at  TEXT    NOT NULL  DEFAULT CURRENT_TIMESTAMP,  -- Time at which the record was created and updated
-  deleted_at  TEXT              DEFAULT NULL,               -- Time at which the record was deleted
-
-  PRIMARY KEY (id),
-  FOREIGN KEY (created_by) REFERENCES users (id) ON DELETE RESTRICT,
-  FOREIGN KEY (updated_by) REFERENCES users (id) ON DELETE RESTRICT,
-  FOREIGN KEY (deleted_by) REFERENCES users (id) ON DELETE RESTRICT
-);
-```
-
-### Base triggers
-
-As a good practice I add some triggers to add extra security and usability to the tables.
-
-#### Prevent record from being purged
-
-This trigger prevents the record from being purged without first being marked as deleted.
-
-```sql
-CREATE TRIGGER IF NOT EXISTS prevent_<table_name>_purge
-  BEFORE DELETE
-  ON <table_name>
-  WHEN old.deleted_at IS NULL OR old.deleted_by IS NULL
-BEGIN
-  SELECT RAISE (ABORT, "Before you purge a record, you must mark it as deleted. Try defining deleted_at and deleted_by before purging the record");
-END;
-```
-
-#### Update record **updated_at**
-
-This trigger automatically updates **updated_at** after a record is updated.
-
-```sql
-CREATE TRIGGER IF NOT EXISTS update_<table_name>_updated_at
-  AFTER UPDATE
-  ON <table_name>
-BEGIN
-  UPDATE <table_name>
-  SET updated_at = CURRENT_TIMESTAMP
-  WHERE id = new.id;
-END;
-```
-
-## Database Schema
-
-**File**: `<root>/database/schema.sql`
-
-### Database settings
-
-```sql
 PRAGMA foreign_keys = ON;
-```
 
-### Users definition
 
-```sql
+
 CREATE TABLE IF NOT EXISTS users (
   id          INTEGER NOT NULL,                             -- The id of the user
   name        TEXT    NOT NULL,                             -- The name of the user
@@ -92,7 +11,7 @@ CREATE TABLE IF NOT EXISTS users (
   created_at  TEXT    NOT NULL  DEFAULT CURRENT_TIMESTAMP,  -- Time at which the record was created in the database
   updated_at  TEXT    NOT NULL  DEFAULT CURRENT_TIMESTAMP,  -- Time at which the record was created and updated
   deleted_at  TEXT              DEFAULT NULL,               -- Time at which the record was deleted
-
+  
   PRIMARY KEY (id),
   UNIQUE (name),
   FOREIGN KEY (created_by) REFERENCES users (id) ON DELETE RESTRICT,
@@ -110,7 +29,7 @@ BEGIN
 END;
 
 
-CREATE TRIGGER IF NOT EXISTS prevent_users_purge
+CREATE TRIGGER IF NOT EXISTS prevent_users_purge 
   BEFORE DELETE
   ON users
   WHEN (old.deleted_at IS NULL OR old.deleted_by IS NULL) AND old.id <> 0
@@ -123,22 +42,17 @@ CREATE TRIGGER IF NOT EXISTS update_users_updated_at
   AFTER UPDATE
   ON users
 BEGIN
-  UPDATE users
+  UPDATE users 
   SET updated_at = CURRENT_TIMESTAMP
   WHERE id = new.id;
 END;
-```
 
-### Insert system user
 
-```sql
 INSERT INTO users (id, name, created_by, updated_by)
 VALUES (0, "system", 0, 0) ON CONFLICT DO NOTHING;
-```
 
-### Characters definition
 
-```sql
+
 CREATE TABLE IF NOT EXISTS characters (
   id          INTEGER NOT NULL,                             -- The id of the character
   name        TEXT    NOT NULL,                             -- The name of the character
@@ -156,9 +70,10 @@ CREATE TABLE IF NOT EXISTS characters (
   created_at  TEXT    NOT NULL  DEFAULT CURRENT_TIMESTAMP,  -- Time at which the record was created in the database
   updated_at  TEXT    NOT NULL  DEFAULT CURRENT_TIMESTAMP,  -- Time at which the record was created and updated
   deleted_at  TEXT              DEFAULT NULL,               -- Time at which the record was deleted
-
+  
   CHECK (status = 'Alive'  OR status = 'Dead' OR status = 'unknown'),
   CHECK (gender = 'Female' OR gender = 'Male' OR gender = 'Genderless' OR gender = 'unknown'),
+  CHECK (from_api IN (false, true)),
   PRIMARY KEY (id),
   FOREIGN KEY (species_id)  REFERENCES character_species (id) ON DELETE RESTRICT,
   FOREIGN KEY (type_id)     REFERENCES character_types (id)   ON DELETE RESTRICT,
@@ -168,7 +83,7 @@ CREATE TABLE IF NOT EXISTS characters (
 );
 
 
-CREATE TRIGGER IF NOT EXISTS prevent_characters_purge
+CREATE TRIGGER IF NOT EXISTS prevent_characters_purge 
   BEFORE DELETE
   ON characters
   WHEN old.deleted_at IS NULL OR old.deleted_by IS NULL
@@ -181,15 +96,13 @@ CREATE TRIGGER IF NOT EXISTS update_characters_updated_at
   AFTER UPDATE
   ON characters
 BEGIN
-  UPDATE characters
+  UPDATE characters 
   SET updated_at = CURRENT_TIMESTAMP
   WHERE id = new.id;
 END;
-```
 
-### Character species definition
 
-```sql
+
 CREATE TABLE IF NOT EXISTS character_species (
   id          INTEGER NOT NULL,                             -- The id of the character species
   name        TEXT    NOT NULL,                             -- The name of the character species
@@ -199,7 +112,7 @@ CREATE TABLE IF NOT EXISTS character_species (
   created_at  TEXT    NOT NULL  DEFAULT CURRENT_TIMESTAMP,  -- Time at which the record was created in the database
   updated_at  TEXT    NOT NULL  DEFAULT CURRENT_TIMESTAMP,  -- Time at which the record was created and updated
   deleted_at  TEXT              DEFAULT NULL,               -- Time at which the record was deleted
-
+  
   PRIMARY KEY (id),
   UNIQUE (name),
   FOREIGN KEY (created_by) REFERENCES users (id) ON DELETE RESTRICT,
@@ -208,7 +121,7 @@ CREATE TABLE IF NOT EXISTS character_species (
 );
 
 
-CREATE TRIGGER IF NOT EXISTS prevent_character_species_purge
+CREATE TRIGGER IF NOT EXISTS prevent_character_species_purge 
   BEFORE DELETE
   ON character_species
   WHEN old.deleted_at IS NULL OR old.deleted_by IS NULL
@@ -221,15 +134,13 @@ CREATE TRIGGER IF NOT EXISTS update_character_species_updated_at
   AFTER UPDATE
   ON character_species
 BEGIN
-  UPDATE character_species
+  UPDATE character_species 
   SET updated_at = CURRENT_TIMESTAMP
   WHERE id = new.id;
 END;
-```
 
-### Character types definition
 
-```sql
+
 CREATE TABLE IF NOT EXISTS character_types (
   id          INTEGER NOT NULL,                             -- The id of the character type
   name        TEXT    NOT NULL,                             -- The name of the character type
@@ -239,7 +150,7 @@ CREATE TABLE IF NOT EXISTS character_types (
   created_at  TEXT    NOT NULL  DEFAULT CURRENT_TIMESTAMP,  -- Time at which the record was created in the database
   updated_at  TEXT    NOT NULL  DEFAULT CURRENT_TIMESTAMP,  -- Time at which the record was created and updated
   deleted_at  TEXT              DEFAULT NULL,               -- Time at which the record was deleted
-
+  
   PRIMARY KEY (id),
   UNIQUE (name),
   FOREIGN KEY (created_by) REFERENCES users (id) ON DELETE RESTRICT,
@@ -248,7 +159,7 @@ CREATE TABLE IF NOT EXISTS character_types (
 );
 
 
-CREATE TRIGGER IF NOT EXISTS prevent_character_types_purge
+CREATE TRIGGER IF NOT EXISTS prevent_character_types_purge 
   BEFORE DELETE
   ON character_types
   WHEN old.deleted_at IS NULL OR old.deleted_by IS NULL
@@ -261,15 +172,13 @@ CREATE TRIGGER IF NOT EXISTS update_character_types_updated_at
   AFTER UPDATE
   ON character_types
 BEGIN
-  UPDATE character_types
+  UPDATE character_types 
   SET updated_at = CURRENT_TIMESTAMP
   WHERE id = new.id;
 END;
-```
 
-### Locations definition
 
-```sql
+
 CREATE TABLE IF NOT EXISTS locations (
   id            INTEGER NOT NULL,                             -- The id of the location
   name          TEXT    NOT NULL,                             -- The name of the location
@@ -282,7 +191,7 @@ CREATE TABLE IF NOT EXISTS locations (
   created_at    TEXT    NOT NULL  DEFAULT CURRENT_TIMESTAMP,  -- Time at which the record was created in the database
   updated_at    TEXT    NOT NULL  DEFAULT CURRENT_TIMESTAMP,  -- Time at which the record was created and updated
   deleted_at    TEXT              DEFAULT NULL,               -- Time at which the record was deleted
-
+  
   CHECK (from_api IN (false, true)),
   PRIMARY KEY (id),
   UNIQUE (name),
@@ -294,7 +203,7 @@ CREATE TABLE IF NOT EXISTS locations (
 );
 
 
-CREATE TRIGGER IF NOT EXISTS prevent_locations_purge
+CREATE TRIGGER IF NOT EXISTS prevent_locations_purge 
   BEFORE DELETE
   ON locations
   WHEN old.deleted_at IS NULL OR old.deleted_by IS NULL
@@ -307,15 +216,13 @@ CREATE TRIGGER IF NOT EXISTS update_locations_updated_at
   AFTER UPDATE
   ON locations
 BEGIN
-  UPDATE locations
+  UPDATE locations 
   SET updated_at = CURRENT_TIMESTAMP
   WHERE id = new.id;
 END;
-```
 
-### Location types definition
 
-```sql
+
 CREATE TABLE IF NOT EXISTS location_types (
   id          INTEGER NOT NULL,                             -- The id of the location type
   name        TEXT    NOT NULL,                             -- The name of the location type
@@ -325,7 +232,7 @@ CREATE TABLE IF NOT EXISTS location_types (
   created_at  TEXT    NOT NULL  DEFAULT CURRENT_TIMESTAMP,  -- Time at which the record was created in the database
   updated_at  TEXT    NOT NULL  DEFAULT CURRENT_TIMESTAMP,  -- Time at which the record was created and updated
   deleted_at  TEXT              DEFAULT NULL,               -- Time at which the record was deleted
-
+  
   PRIMARY KEY (id),
   UNIQUE (name),
   FOREIGN KEY (created_by) REFERENCES users (id) ON DELETE RESTRICT,
@@ -334,7 +241,7 @@ CREATE TABLE IF NOT EXISTS location_types (
 );
 
 
-CREATE TRIGGER IF NOT EXISTS prevent_location_types_purge
+CREATE TRIGGER IF NOT EXISTS prevent_location_types_purge 
   BEFORE DELETE
   ON location_types
   WHEN old.deleted_at IS NULL OR old.deleted_by IS NULL
@@ -347,15 +254,13 @@ CREATE TRIGGER IF NOT EXISTS update_location_types_updated_at
   AFTER UPDATE
   ON location_types
 BEGIN
-  UPDATE location_types
+  UPDATE location_types 
   SET updated_at = CURRENT_TIMESTAMP
   WHERE id = new.id;
 END;
-```
 
-### Location dimensions definition
 
-```sql
+
 CREATE TABLE IF NOT EXISTS location_dimensions (
   id          INTEGER NOT NULL,                             -- The id of the location dimension
   name        TEXT    NOT NULL,                             -- The name of the location dimension
@@ -374,7 +279,7 @@ CREATE TABLE IF NOT EXISTS location_dimensions (
 );
 
 
-CREATE TRIGGER IF NOT EXISTS prevent_location_dimensions_purge
+CREATE TRIGGER IF NOT EXISTS prevent_location_dimensions_purge 
   BEFORE DELETE
   ON location_dimensions
   WHEN old.deleted_at IS NULL OR old.deleted_by IS NULL
@@ -387,15 +292,13 @@ CREATE TRIGGER IF NOT EXISTS update_location_dimensions_updated_at
   AFTER UPDATE
   ON location_dimensions
 BEGIN
-  UPDATE location_dimensions
+  UPDATE location_dimensions 
   SET updated_at = CURRENT_TIMESTAMP
   WHERE id = new.id;
 END;
-```
 
-### Episodes definition
 
-```sql
+
 CREATE TABLE IF NOT EXISTS episodes (
   id          INTEGER NOT NULL,                             -- The id of the episode
   name        TEXT    NOT NULL,                             -- The name of the episode
@@ -420,7 +323,7 @@ CREATE TABLE IF NOT EXISTS episodes (
 );
 
 
-CREATE TRIGGER IF NOT EXISTS prevent_episodes_purge
+CREATE TRIGGER IF NOT EXISTS prevent_episodes_purge 
   BEFORE DELETE
   ON episodes
   WHEN old.deleted_at IS NULL OR old.deleted_by IS NULL
@@ -433,15 +336,13 @@ CREATE TRIGGER IF NOT EXISTS update_episodes_updated_at
   AFTER UPDATE
   ON episodes
 BEGIN
-  UPDATE episodes
+  UPDATE episodes 
   SET updated_at = CURRENT_TIMESTAMP
   WHERE id = new.id;
 END;
-```
 
-### Characters Episodes definition
 
-```sql
+
 CREATE TABLE IF NOT EXISTS characters_episodes (
   id            INTEGER NOT NULL,                             -- The id of the character episode
   character_id  INTEGER NOT NULL,                             -- The id of the character
@@ -462,7 +363,7 @@ CREATE TABLE IF NOT EXISTS characters_episodes (
 );
 
 
-CREATE TRIGGER IF NOT EXISTS prevent_characters_episodes_purge
+CREATE TRIGGER IF NOT EXISTS prevent_characters_episodes_purge 
   BEFORE DELETE
   ON characters_episodes
   WHEN old.deleted_at IS NULL OR old.deleted_by IS NULL
@@ -475,36 +376,7 @@ CREATE TRIGGER IF NOT EXISTS update_characters_episodes_updated_at
   AFTER UPDATE
   ON characters_episodes
 BEGIN
-  UPDATE characters_episodes
+  UPDATE characters_episodes 
   SET updated_at = CURRENT_TIMESTAMP
   WHERE id = new.id;
 END;
-
-```
-
-## Script to populate the database
-
-Since SQLite has a utility to import from **csv**, I first convert the **json** files to **csv** files and with a bash script use the sqlite3 cli to populate the database.
-
-### Setup script
-
-```bash
-DB_PATH="$(pwd)/$(dirname "$0")/database.db"
-SCHEMA_PATH="$(pwd)/$(dirname "$0")/schema.sql"
-
-if [ -f "$DB_PATH" ]; then rm "$DB_PATH"; fi
-if [ -f "$SCHEMA_PATH" ]; then sqlite3 "$DB_PATH" <"$SCHEMA_PATH"; fi
-
-```
-
-### Generate **csv** files
-
-```javascript
-
-```
-
-### Populate the database
-
-```bash
-
-```
