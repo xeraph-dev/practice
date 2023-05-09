@@ -16,6 +16,26 @@
 >
 > The `BOOLEAN` type is an alias to `INTEGER` that SQLite allows, it is also necessary to check if it is `false`\|`0` or `true` \| `1`.
 
+> `VIEW`s are used to optimize queries. Perhaps the character with its (status|gender|etc...) is needed instead of its id, and in this case it is not necessary to do subqueries. For example, a common query might be
+>
+> ```sql
+> SELECT
+>   id,
+>   name
+>   (SELECT name FROM character_species) AS species,
+> FROM characters
+> ```
+>
+> With `VIEW` I don't need to do that. instead I do
+>
+> ```sql
+> SELECT
+>   id,
+>   name
+>   species,
+> FROM v_characters
+> ```
+
 ### Base table schema
 
 As a good practice, I decide to use this schema as the default table schema for all tables.
@@ -481,7 +501,55 @@ BEGIN
   SET updated_at = CURRENT_TIMESTAMP
   WHERE id = new.id;
 END;
+```
 
+### Characters View
+
+```sql
+CREATE VIEW IF NOT EXISTS v_characters AS
+SELECT
+  c.id,
+  c.name,
+  c.status,
+  c.gender,
+  c.species_id,   cs.name AS species,
+  c.type_id,      ct.name AS type,
+  c.location_id,  cl.name AS location,
+  c.origin_id,    co.name AS origin,
+  c.image,
+  c.from_api,
+  c.created_by,
+  c.updated_by,
+  c.deleted_by,
+  c.created_at,
+  c.updated_at,
+  c.deleted_at
+FROM characters AS c
+INNER JOIN character_species  AS cs ON cs.id = c.species_id
+INNER JOIN character_types    AS ct ON ct.id = c.type_id
+INNER JOIN locations          AS cl ON cl.id = c.location_id
+INNER JOIN locations          AS co ON co.id = c.origin_id;
+```
+
+### Locations View
+
+```sql
+CREATE VIEW IF NOT EXISTS v_locations AS
+SELECT
+  l.id,
+  l.name,
+  l.type_id,      lt.name AS type,
+  l.dimension_id, ld.name AS dimension,
+  l.from_api,
+  l.created_by,
+  l.updated_by,
+  l.deleted_by,
+  l.created_at,
+  l.updated_at,
+  l.deleted_at
+FROM locations AS l
+INNER JOIN location_types       AS lt ON lt.id = l.type_id
+INNER JOIN location_dimensions  AS ld ON ld.id = l.dimension_id;
 ```
 
 ## Script to populate the database

@@ -14,12 +14,8 @@
     - [Solution](./rick-and-morty/2-get-data/solution.md)
   - [Database](./rick-and-morty/3-database/task.md)
     - [Solution](./rick-and-morty/3-database/solution.md)
-  - [Server](./rick-and-morty/4-server/1-setup.md)
-    - [Setup](./rick-and-morty/4-server/1-setup.md)
-    - [Characters feature](./rick-and-morty/4-server/2-characters.md)
-    - [Locations feature](./rick-and-morty/4-server/3-locations.md)
-    - [Episodes feature](./rick-and-morty/4-server/4-episodes.md)
-    - [Users feature](./rick-and-morty/4-server/5-users.md)
+  - [Server](./rick-and-morty/4-server/task.md)
+    - [Solution](./rick-and-morty/4-server/solution.md)
 
 ---
 
