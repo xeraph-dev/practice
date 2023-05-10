@@ -14,7 +14,9 @@
 
 > SQLite doesn't have enums, so I use `CHECK` to define a set of allowed strings.
 >
-> The `BOOLEAN` type is an alias to `INTEGER` that SQLite allows, it is also necessary to check if it is `false`\|`0` or `true` \| `1`.
+> SQLite doesn't support `BOOLEAN` types directly and also doesn't have any integer type other than `INTEGER`.
+> So the `BOOLEAN` type is an alias for `INTEGER` which SQLite allows.
+> You also need to check if `false`|`0` or `true`|`1`.
 
 > `VIEW`s are used to optimize queries. Perhaps the character with its (status|gender|etc...) is needed instead of its id, and in this case it is not necessary to do subqueries. For example, a common query might be
 >

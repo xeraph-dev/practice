@@ -46,65 +46,52 @@ I will give you the database schema in an easy to understand format and you need
 
 Setup your database folder and create your first migration file
 
-### Users Table
+### Common fields for all Models
+
+> - Set **id** and **name** as the first fields and the **rest** of the fields as the last fields of all schemas
+> - [Character](#character-table) does not have a `Unique` name field.
+> - [Characters Episodes](#characters-episodes-table) does not have a name field.
+> - Empty schemas only have common fields
 
 | Key Type                                           | Column Name    | Type       | Nullable | Unique  | Default             | Comment                                              |
 | -------------------------------------------------- | -------------- | ---------- | -------- | ------- | ------------------- | ---------------------------------------------------- |
-| **_Primary Key_**                                  | **id**         | `INTEGER`  | `false`  | `true`  |                     | The id of the user                                   |
-|                                                    | **name**       | `TEXT`     | `false`  | `true`  |                     | The name of the user                                 |
+| **_Primary Key_**                                  | **id**         | `INTEGER`  | `false`  | `true`  |                     | The id of the `<record name>`                        |
+|                                                    | **name**       | `TEXT`     | `false`  | `true`  |                     | The name of the `<record name>`                      |
 | **_Foreign Key_** <br> [user](#users-table).**id** | **created_by** | `INTEGER`  | `false`  | `false` |                     | The user that creates this record                    |
 | **_Foreign Key_** <br> [user](#users-table).**id** | **updated_by** | `INTEGER`  | `false`  | `false` |                     | The user that updates this record                    |
 | **_Foreign Key_** <br> [user](#users-table).**id** | **deleted_by** | `INTEGER`  | `true`   | `false` | `NULL`              | The user that deletes this record                    |
 |                                                    | **created_at** | `DateTime` | `false`  | `false` | `CURRENT_TIMESTAMP` | Time at which the record was created in the database |
 |                                                    | **updated_at** | `DateTime` | `false`  | `false` | `CURRENT_TIMESTAMP` | Time at which the record was created and updated     |
 |                                                    | **deleted_at** | `DateTime` | `true`   | `false` | `NULL`              | Time at which the record was deleted                 |
+
+### Users Table
+
+| Key Type | Column Name | Type | Nullable | Unique | Default | Comment |
+| -------- | ----------- | ---- | -------- | ------ | ------- | ------- |
 
 ### Characters Table
 
-| Key Type                                                                    | Column Name     | Type                                         | Nullable | Unique  | Default             | Comment                                              |
-| --------------------------------------------------------------------------- | --------------- | -------------------------------------------- | -------- | ------- | ------------------- | ---------------------------------------------------- |
-| **_Primary Key_**                                                           | **id**          | `INTEGER`                                    | `false`  | `true`  |                     | The id of the character                              |
-|                                                                             | **name**        | `TEXT`                                       | `false`  | `false` |                     | The name of the character                            |
-|                                                                             | **status**      | [Character Statuses](#character-status-enum) | `false`  | `false` |                     | The status of the character                          |
-|                                                                             | **gender**      | [Character Genders](#character-gender-enum)  | `false`  | `false` |                     | The gender of the character                          |
-| **_Foreign Key_** <br> [character_species](#character-species-table).**id** | **species_id**  | `INTEGER`                                    | `false`  | `false` |                     | The species of the character.                        |
-| **_Foreign Key_** <br> [character_type](#character-types-table).**id**      | **type_id**     | `INTEGER`                                    | `true`   | `false` |                     | The type or subspecies of the character.             |
-| **_Foreign Key_** <br> [location](#locations-table).**id**                  | **location_id** | `INTEGER`                                    | `true`   | `false` |                     | The location of the character.                       |
-| **_Foreign Key_** <br> [location](#locations-table).**id**                  | **origin_id**   | `INTEGER`                                    | `true`   | `false` |                     | The origin location of the character.                |
-|                                                                             | **image**       | `TEXT`                                       | `false`  | `false` |                     | The image of the character                           |
-|                                                                             | **from_api**    | `BOOLEAN`                                    | `false`  | `false` | `false`             | If the data was obtained from the original api       |
-| **_Foreign Key_** <br> [user](#users-table).**id**                          | **created_by**  | `INTEGER`                                    | `false`  | `false` |                     | The user that creates this record                    |
-| **_Foreign Key_** <br> [user](#users-table).**id**                          | **updated_by**  | `INTEGER`                                    | `false`  | `false` |                     | The user that updates this record                    |
-| **_Foreign Key_** <br> [user](#users-table).**id**                          | **deleted_by**  | `INTEGER`                                    | `true`   | `false` | `NULL`              | The user that deletes this record                    |
-|                                                                             | **created_at**  | `DateTime`                                   | `false`  | `false` | `CURRENT_TIMESTAMP` | Time at which the record was created in the database |
-|                                                                             | **updated_at**  | `DateTime`                                   | `false`  | `false` | `CURRENT_TIMESTAMP` | Time at which the record was created and updated     |
-|                                                                             | **deleted_at**  | `DateTime`                                   | `true`   | `false` | `NULL`              | Time at which the record was deleted                 |
+| Key Type                                                                    | Column Name     | Type                                         | Nullable | Unique  | Default | Comment                                        |
+| --------------------------------------------------------------------------- | --------------- | -------------------------------------------- | -------- | ------- | ------- | ---------------------------------------------- |
+|                                                                             | **name**        | `TEXT`                                       | `false`  | `false` |         | The name of the character                      |
+|                                                                             | **status**      | [Character Statuses](#character-status-enum) | `false`  | `false` |         | The status of the character                    |
+|                                                                             | **gender**      | [Character Genders](#character-gender-enum)  | `false`  | `false` |         | The gender of the character                    |
+| **_Foreign Key_** <br> [character_species](#character-species-table).**id** | **species_id**  | `INTEGER`                                    | `false`  | `false` |         | The species of the character.                  |
+| **_Foreign Key_** <br> [character_type](#character-types-table).**id**      | **type_id**     | `INTEGER`                                    | `true`   | `false` |         | The type or subspecies of the character.       |
+| **_Foreign Key_** <br> [location](#locations-table).**id**                  | **location_id** | `INTEGER`                                    | `true`   | `false` |         | The location of the character.                 |
+| **_Foreign Key_** <br> [location](#locations-table).**id**                  | **origin_id**   | `INTEGER`                                    | `true`   | `false` |         | The origin location of the character.          |
+|                                                                             | **image**       | `TEXT`                                       | `false`  | `false` |         | The image of the character                     |
+|                                                                             | **from_api**    | `BOOLEAN`                                    | `false`  | `false` | `false` | If the data was obtained from the original api |
 
 ### Character Species Table
 
-| Key Type                                           | Column Name    | Type       | Nullable | Unique  | Default             | Comment                                              |
-| -------------------------------------------------- | -------------- | ---------- | -------- | ------- | ------------------- | ---------------------------------------------------- |
-| **_Primary Key_**                                  | **id**         | `INTEGER`  | `false`  | `true`  |                     | The id of the character species                      |
-|                                                    | **name**       | `TEXT`     | `false`  | `true`  |                     | The name of the character species                    |
-| **_Foreign Key_** <br> [user](#users-table).**id** | **created_by** | `INTEGER`  | `false`  | `false` |                     | The user that creates this record                    |
-| **_Foreign Key_** <br> [user](#users-table).**id** | **updated_by** | `INTEGER`  | `false`  | `false` |                     | The user that updates this record                    |
-| **_Foreign Key_** <br> [user](#users-table).**id** | **deleted_by** | `INTEGER`  | `true`   | `false` | `NULL`              | The user that deletes this record                    |
-|                                                    | **created_at** | `DateTime` | `false`  | `false` | `CURRENT_TIMESTAMP` | Time at which the record was created in the database |
-|                                                    | **updated_at** | `DateTime` | `false`  | `false` | `CURRENT_TIMESTAMP` | Time at which the record was created and updated     |
-|                                                    | **deleted_at** | `DateTime` | `true`   | `false` | `NULL`              | Time at which the record was deleted                 |
+| Key Type | Column Name | Type | Nullable | Unique | Default | Comment |
+| -------- | ----------- | ---- | -------- | ------ | ------- | ------- |
 
 ### Character Types Table
 
-| Key Type                                           | Column Name    | Type       | Nullable | Unique  | Default             | Comment                                              |
-| -------------------------------------------------- | -------------- | ---------- | -------- | ------- | ------------------- | ---------------------------------------------------- |
-| **_Primary Key_**                                  | **id**         | `INTEGER`  | `false`  | `true`  |                     | The id of the character type or subspecies           |
-|                                                    | **name**       | `TEXT`     | `false`  | `true`  |                     | The name of the character type or subspecies         |
-| **_Foreign Key_** <br> [user](#users-table).**id** | **created_by** | `INTEGER`  | `false`  | `false` |                     | The user that creates this record                    |
-| **_Foreign Key_** <br> [user](#users-table).**id** | **updated_by** | `INTEGER`  | `false`  | `false` |                     | The user that updates this record                    |
-| **_Foreign Key_** <br> [user](#users-table).**id** | **deleted_by** | `INTEGER`  | `true`   | `false` | `NULL`              | The user that deletes this record                    |
-|                                                    | **created_at** | `DateTime` | `false`  | `false` | `CURRENT_TIMESTAMP` | Time at which the record was created in the database |
-|                                                    | **updated_at** | `DateTime` | `false`  | `false` | `CURRENT_TIMESTAMP` | Time at which the record was created and updated     |
-|                                                    | **deleted_at** | `DateTime` | `true`   | `false` | `NULL`              | Time at which the record was deleted                 |
+| Key Type | Column Name | Type | Nullable | Unique | Default | Comment |
+| -------- | ----------- | ---- | -------- | ------ | ------- | ------- |
 
 ### Character Status Enum
 
@@ -121,76 +108,37 @@ Setup your database folder and create your first migration file
 
 ### Locations Table
 
-| Key Type                                                                  | Column Name      | Type       | Nullable | Unique  | Default             | Comment                                              |
-| ------------------------------------------------------------------------- | ---------------- | ---------- | -------- | ------- | ------------------- | ---------------------------------------------------- |
-| **_Primary Key_**                                                         | **id**           | `INTEGER`  | `false`  | `true`  |                     | The id of the location                               |
-|                                                                           | **name**         | `TEXT`     | `true`   | `false` |                     | The name of the location                             |
-| **_Foreign Key_** <br> [location_type](#location-types-table).**id**      | **type_id**      | `INTEGER`  | `true`   | `false` |                     | The type of the location                             |
-| **_Foreign Key_** <br> [location_dimension](#location-types-table).**id** | **dimension_id** | `INTEGER`  | `true`   | `false` |                     | The dimension of the location                        |
-|                                                                           | **from_api**     | `BOOLEAN`  | `false`  | `false` | `false`             | If the data was optained from the original api       |
-| **_Foreign Key_** <br> [user](#users-table).**id**                        | **created_by**   | `INTEGER`  | `false`  | `false` |                     | The user that creates this record                    |
-| **_Foreign Key_** <br> [user](#users-table).**id**                        | **updated_by**   | `INTEGER`  | `false`  | `false` |                     | The user that updates this record                    |
-| **_Foreign Key_** <br> [user](#users-table).**id**                        | **deleted_by**   | `INTEGER`  | `true`   | `false` | `NULL`              | The user that deletes this record                    |
-|                                                                           | **created_at**   | `DateTime` | `false`  | `false` | `CURRENT_TIMESTAMP` | Time at which the record was created in the database |
-|                                                                           | **updated_at**   | `DateTime` | `false`  | `false` | `CURRENT_TIMESTAMP` | Time at which the record was created and updated     |
-|                                                                           | **deleted_at**   | `DateTime` | `true`   | `false` | `NULL`              | Time at which the record was deleted                 |
+| Key Type                                                                  | Column Name      | Type      | Nullable | Unique  | Default | Comment                                        |
+| ------------------------------------------------------------------------- | ---------------- | --------- | -------- | ------- | ------- | ---------------------------------------------- |
+| **_Foreign Key_** <br> [location_type](#location-types-table).**id**      | **type_id**      | `INTEGER` | `true`   | `false` |         | The type of the location                       |
+| **_Foreign Key_** <br> [location_dimension](#location-types-table).**id** | **dimension_id** | `INTEGER` | `true`   | `false` |         | The dimension of the location                  |
+|                                                                           | **from_api**     | `BOOLEAN` | `false`  | `false` | `false` | If the data was optained from the original api |
 
 ### Location Types Table
 
-| Key Type                                           | Column Name    | Type       | Nullable | Unique  | Default             | Comment                                              |
-| -------------------------------------------------- | -------------- | ---------- | -------- | ------- | ------------------- | ---------------------------------------------------- |
-| **_Primary Key_**                                  | **id**         | `INTEGER`  | `false`  | `true`  |                     | The id of the location type                          |
-|                                                    | **name**       | `TEXT`     | `false`  | `false` |                     | The name of the location type                        |
-| **_Foreign Key_** <br> [user](#users-table).**id** | **created_by** | `INTEGER`  | `false`  | `false` |                     | The user that creates this record                    |
-| **_Foreign Key_** <br> [user](#users-table).**id** | **updated_by** | `INTEGER`  | `false`  | `false` |                     | The user that updates this record                    |
-| **_Foreign Key_** <br> [user](#users-table).**id** | **deleted_by** | `INTEGER`  | `true`   | `false` | `NULL`              | The user that deletes this record                    |
-|                                                    | **created_at** | `DateTime` | `false`  | `false` | `CURRENT_TIMESTAMP` | Time at which the record was created in the database |
-|                                                    | **updated_at** | `DateTime` | `false`  | `false` | `CURRENT_TIMESTAMP` | Time at which the record was created and updated     |
-|                                                    | **deleted_at** | `DateTime` | `true`   | `false` | `NULL`              | Time at which the record was deleted                 |
+| Key Type | Column Name | Type | Nullable | Unique | Default | Comment |
+| -------- | ----------- | ---- | -------- | ------ | ------- | ------- |
 
 ### Location Dimensions Table
 
-| Key Type                                           | Column Name    | Type       | Nullable | Unique  | Default             | Comment                                              |
-| -------------------------------------------------- | -------------- | ---------- | -------- | ------- | ------------------- | ---------------------------------------------------- |
-| **_Primary Key_**                                  | **id**         | `INTEGER`  | `false`  | `true`  |                     | The id of the location dimension                     |
-|                                                    | **name**       | `TEXT`     | `false`  | `false` |                     | The name of the location dimension                   |
-| **_Foreign Key_** <br> [user](#users-table).**id** | **created_by** | `INTEGER`  | `false`  | `false` |                     | The user that creates this record                    |
-| **_Foreign Key_** <br> [user](#users-table).**id** | **updated_by** | `INTEGER`  | `false`  | `false` |                     | The user that updates this record                    |
-| **_Foreign Key_** <br> [user](#users-table).**id** | **deleted_by** | `INTEGER`  | `true`   | `false` | `NULL`              | The user that deletes this record                    |
-|                                                    | **created_at** | `DateTime` | `false`  | `false` | `CURRENT_TIMESTAMP` | Time at which the record was created in the database |
-|                                                    | **updated_at** | `DateTime` | `false`  | `false` | `CURRENT_TIMESTAMP` | Time at which the record was created and updated     |
-|                                                    | **deleted_at** | `DateTime` | `true`   | `false` | `NULL`              | Time at which the record was deleted                 |
+| Key Type | Column Name | Type | Nullable | Unique | Default | Comment |
+| -------- | ----------- | ---- | -------- | ------ | ------- | ------- |
 
 ### Episodes Table
 
-| Key Type                                           | Column Name    | Type       | Nullable | Unique  | Default             | Comment                                              |
-| -------------------------------------------------- | -------------- | ---------- | -------- | ------- | ------------------- | ---------------------------------------------------- |
-| **_Primary Key_**                                  | **id**         | `INTEGER`  | `false`  | `true`  |                     | The id of the episode                                |
-|                                                    | **name**       | `TEXT`     | `true`   | `false` |                     | The name of the episode                              |
-|                                                    | **season**     | `INTEGER`  | `false`  | `false` |                     | The season number of the episode                     |
-|                                                    | **episode**    | `INTEGER`  | `false`  | `false` |                     | The episode number of the episode                    |
-|                                                    | **air_date**   | `DateTime` | `false`  | `false` |                     | The air date of the episode                          |
-|                                                    | **from_api**   | `BOOLEAN`  | `false`  | `false` | `false`             | If the data was optained from the original api       |
-| **_Foreign Key_** <br> [user](#users-table).**id** | **created_by** | `INTEGER`  | `false`  | `false` |                     | The user that creates this record                    |
-| **_Foreign Key_** <br> [user](#users-table).**id** | **updated_by** | `INTEGER`  | `false`  | `false` |                     | The user that updates this record                    |
-| **_Foreign Key_** <br> [user](#users-table).**id** | **deleted_by** | `INTEGER`  | `true`   | `false` | `NULL`              | The user that deletes this record                    |
-|                                                    | **created_at** | `DateTime` | `false`  | `false` | `CURRENT_TIMESTAMP` | Time at which the record was created in the database |
-|                                                    | **updated_at** | `DateTime` | `false`  | `false` | `CURRENT_TIMESTAMP` | Time at which the record was created and updated     |
-|                                                    | **deleted_at** | `DateTime` | `true`   | `false` | `NULL`              | Time at which the record was deleted                 |
+| Key Type | Column Name  | Type       | Nullable | Unique  | Default | Comment                                        |
+| -------- | ------------ | ---------- | -------- | ------- | ------- | ---------------------------------------------- |
+|          | **season**   | `INTEGER`  | `false`  | `false` |         | The season number of the episode               |
+|          | **episode**  | `INTEGER`  | `false`  | `false` |         | The episode number of the episode              |
+|          | **air_date** | `DateTime` | `false`  | `false` |         | The air date of the episode                    |
+|          | **from_api** | `BOOLEAN`  | `false`  | `false` | `false` | If the data was optained from the original api |
 
 ### Characters Episodes Table
 
-| Key Type                                                     | Column Name      | Type       | Nullable | Unique  | Default             | Comment                                              |
-| ------------------------------------------------------------ | ---------------- | ---------- | -------- | ------- | ------------------- | ---------------------------------------------------- |
-| **_Primary Key_**                                            | **id**           | `INTEGER`  | `false`  | `false` |                     | The id of the character episode                      |
-| **_Foreign Key_** <br> [character](#characters-table).**id** | **character_id** | `INTEGER`  | `false`  | `false` |                     | The id of the character                              |
-| **_Foreign Key_** <br> [episode](#episodes-table).**id**     | **episode_id**   | `INTEGER`  | `false`  | `false` |                     | The id of the episode                                |
-| **_Foreign Key_** <br> [user](#users-table).**id**           | **created_by**   | `INTEGER`  | `false`  | `false` |                     | The user that creates this record                    |
-| **_Foreign Key_** <br> [user](#users-table).**id**           | **updated_by**   | `INTEGER`  | `false`  | `false` |                     | The user that updates this record                    |
-| **_Foreign Key_** <br> [user](#users-table).**id**           | **deleted_by**   | `INTEGER`  | `true`   | `false` | `NULL`              | The user that deletes this record                    |
-|                                                              | **created_at**   | `DateTime` | `false`  | `false` | `CURRENT_TIMESTAMP` | Time at which the record was created in the database |
-|                                                              | **updated_at**   | `DateTime` | `false`  | `false` | `CURRENT_TIMESTAMP` | Time at which the record was created and updated     |
-|                                                              | **deleted_at**   | `DateTime` | `true`   | `false` | `NULL`              | Time at which the record was deleted                 |
+| Key Type                                                     | Column Name      | Type      | Nullable | Unique  | Default | Comment                 |
+| ------------------------------------------------------------ | ---------------- | --------- | -------- | ------- | ------- | ----------------------- |
+| **_Foreign Key_** <br> [character](#characters-table).**id** | **character_id** | `INTEGER` | `false`  | `false` |         | The id of the character |
+| **_Foreign Key_** <br> [episode](#episodes-table).**id**     | **episode_id**   | `INTEGER` | `false`  | `false` |         | The id of the episode   |
 
 ## Script to populate the database
 
