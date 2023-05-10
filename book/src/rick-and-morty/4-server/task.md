@@ -243,11 +243,11 @@ In SQL `page` is `OFFSET` and `count` is `LIMIT`
 
 #### Paging Meta Type
 
-| Key       | Type      | Nullable | Comment                |
-| --------- | --------- | -------- | ---------------------- |
-| **total** | `Integer` | `false`  | Total count of records |
-| **page**  | `Integer` | `false`  | Current page           |
-| **count** | `Integer` | `false`  | Record count           |
+| Key       | Type      | Comment                |
+| --------- | --------- | ---------------------- |
+| **total** | `Integer` | Total count of records |
+| **page**  | `Integer` | Current page           |
+| **count** | `Integer` | Record count           |
 
 ### Sorting
 
@@ -261,10 +261,10 @@ In SQL `sortBy` is `ORDER BY` and `sortDir` is `ASC` or `DESC` after `ORDER BY`.
 
 #### Sorting Meta Type
 
-| Key     | Type                                   | Nullable | Comment |
-| ------- | -------------------------------------- | -------- | ------- |
-| **by**  | `String`                               | `false`  |         |
-| **dir** | [Sort Direction](#sort-direction-enum) | `false`  |         |
+| Key     | Type                                   |
+| ------- | -------------------------------------- |
+| **by**  | `String`                               |
+| **dir** | [Sort Direction](#sort-direction-enum) |
 
 #### Sort Direction Enum
 
@@ -283,10 +283,10 @@ In SQL you can to filter with `WHERE`, `AND`, and `OR` keywords.
 
 #### Filtering Meta Type
 
-| Key    | Type      | Nullable | Comment |
-| ------ | --------- | -------- | ------- |
-| **by** | `Integer` | `false`  |         |
-| **q**  | `Integer` | `false`  |         |
+| Key    | Type      |
+| ------ | --------- |
+| **by** | `Integer` |
+| **q**  | `Integer` |
 
 ### Range
 
@@ -312,10 +312,10 @@ The property **ranged** in the response means that you need to define other endp
 
 #### Range Meta Type
 
-| Key      | Type      | Nullable | Comment |
-| -------- | --------- | -------- | ------- |
-| **from** | `Integer` | `false`  |         |
-| **to**   | `Integer` | `false`  |         |
+| Key      | Type      |
+| -------- | --------- |
+| **from** | `Integer` |
+| **to**   | `Integer` |
 
 ### Includes query param
 
@@ -328,12 +328,12 @@ Also can contains multiple includes separated by comma.
 
 ### ResponseMeta Type
 
-| Key           | Type                                   | Nullable |
-| ------------- | -------------------------------------- | -------- |
-| **paging**    | [Paging Meta](#paging-meta-type)       | `false`  |
-| **sorting**   | [Sorting Meta](#sorting-meta-type)     | `false`  |
-| **filtering** | [Filtering Meta](#filtering-meta-type) | `false`  |
-| **range**     |                                        |          |
+| Key           | Type                                   |
+| ------------- | -------------------------------------- |
+| **paging**    | [Paging Meta](#paging-meta-type)       |
+| **sorting**   | [Sorting Meta](#sorting-meta-type)     |
+| **filtering** | [Filtering Meta](#filtering-meta-type) |
+| **range**     | [Renge](#range-meta-type)              |
 
 ### ResponseError Type
 
