@@ -575,7 +575,7 @@ Also can contains multiple includes separated by comma.
 
 ### Refresh Sign
 
-### Challenge
+### Sign Challenge
 
 ## Authorization
 
