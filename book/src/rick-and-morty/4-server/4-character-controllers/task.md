@@ -1,0 +1,44 @@
+# Character Controllers
+
+## Tasks
+
+- [ ] Define Character [endpoints](../1-setup/task.md#endpoint-types-table):
+- [ ] `/characters`: routes
+  - [ ] Get [Character](../2-models-and-types/task.md#character-model) List
+  - [ ] Get [Character](../2-models-and-types/task.md#character-model)
+  - [ ] Get ranged [Character](../2-models-and-types/task.md#character-model) List
+  - [ ] Get deleted [Character](../2-models-and-types/task.md#character-model) List
+  - [ ] Get ranged deleted [Character](../2-models-and-types/task.md#character-model) List
+  - [ ] Create [Character](../2-models-and-types/task.md#character-model)
+  - [ ] Put [Character](../2-models-and-types/task.md#character-model)
+  - [ ] Update [Character](../2-models-and-types/task.md#character-model)
+  - [ ] Delete [Character](../2-models-and-types/task.md#character-model)
+  - [ ] Delete ranged [Character](../2-models-and-types/task.md#character-model)
+  - [ ] Purge [Character](../2-models-and-types/task.md#character-model)
+  - [ ] Purge ranged [Character](../2-models-and-types/task.md#character-model)
+- [ ] `/character/species`: routes
+  - [ ] Get [Character Species](../2-models-and-types/task.md#character-species-model) List
+  - [ ] Get [Character Species](../2-models-and-types/task.md#character-species-model)
+  - [ ] Get ranged [Character Species](../2-models-and-types/task.md#character-species-model) List
+  - [ ] Get deleted [Character Species](../2-models-and-types/task.md#character-species-model) List
+  - [ ] Get ranged deleted [Character Species](../2-models-and-types/task.md#character-species-model) List
+  - [ ] Create [Character Species](../2-models-and-types/task.md#character-species-model)
+  - [ ] Put [Character Species](../2-models-and-types/task.md#character-species-model)
+  - [ ] Update [Character Species](../2-models-and-types/task.md#character-species-model)
+  - [ ] Delete [Character Species](../2-models-and-types/task.md#character-species-model)
+  - [ ] Delete ranged [Character Species](../2-models-and-types/task.md#character-species-model)
+  - [ ] Purge [Character Species](../2-models-and-types/task.md#character-species-model)
+  - [ ] Purge ranged [Character Species](../2-models-and-types/task.md#character-species-model)
+- [ ] `/character/types`: routes
+  - [ ] Get [Character Types](../2-models-and-types/task.md#character-type-model) List
+  - [ ] Get [Character Types](../2-models-and-types/task.md#character-type-model)
+  - [ ] Get ranged [Character Types](../2-models-and-types/task.md#character-type-model) List
+  - [ ] Get deleted [Character Types](../2-models-and-types/task.md#character-type-model) List
+  - [ ] Get ranged deleted [Character Types](../2-models-and-types/task.md#character-type-model) List
+  - [ ] Create [Character Types](../2-models-and-types/task.md#character-type-model)
+  - [ ] Put [Character Types](../2-models-and-types/task.md#character-type-model)
+  - [ ] Update [Character Types](../2-models-and-types/task.md#character-type-model)
+  - [ ] Delete [Character Types](../2-models-and-types/task.md#character-type-model)
+  - [ ] Delete ranged [Character Types](../2-models-and-types/task.md#character-type-model)
+  - [ ] Purge [Character Types](../2-models-and-types/task.md#character-type-model)
+  - [ ] Purge ranged [Character Types](../2-models-and-types/task.md#character-type-model)

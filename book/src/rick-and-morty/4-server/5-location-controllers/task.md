@@ -1,0 +1,44 @@
+# Location Controllers
+
+## Tasks
+
+- [ ] Define Location [endpoints](../1-setup/task.md#endpoint-types-table):
+- [ ] `/locations`: routes
+  - [ ] Get [Location](../2-models-and-types/task.md#location-model) List
+  - [ ] Get [Location](../2-models-and-types/task.md#location-model)
+  - [ ] Get ranged [Location](../2-models-and-types/task.md#location-model) List
+  - [ ] Get deleted [Location](../2-models-and-types/task.md#location-model) List
+  - [ ] Get ranged deleted [Location](../2-models-and-types/task.md#location-model) List
+  - [ ] Create [Location](../2-models-and-types/task.md#location-model)
+  - [ ] Put [Location](../2-models-and-types/task.md#location-model)
+  - [ ] Update [Location](../2-models-and-types/task.md#location-model)
+  - [ ] Delete [Location](../2-models-and-types/task.md#location-model)
+  - [ ] Delete ranged [Location](../2-models-and-types/task.md#location-model)
+  - [ ] Purge [Location](../2-models-and-types/task.md#location-model)
+  - [ ] Purge ranged [Location](../2-models-and-types/task.md#location-model)
+- [ ] `/location/types`: routes
+  - [ ] Get [Location Types](../2-models-and-types/task.md#location-type-model) List
+  - [ ] Get [Location Types](../2-models-and-types/task.md#location-type-model)
+  - [ ] Get ranged [Location Types](../2-models-and-types/task.md#location-type-model) List
+  - [ ] Get deleted [Location Types](../2-models-and-types/task.md#location-type-model) List
+  - [ ] Get ranged deleted [Location Types](../2-models-and-types/task.md#location-type-model) List
+  - [ ] Create [Location Types](../2-models-and-types/task.md#location-type-model)
+  - [ ] Put [Location Types](../2-models-and-types/task.md#location-type-model)
+  - [ ] Update [Location Types](../2-models-and-types/task.md#location-type-model)
+  - [ ] Delete [Location Types](../2-models-and-types/task.md#location-type-model)
+  - [ ] Delete ranged [Location Types](../2-models-and-types/task.md#location-type-model)
+  - [ ] Purge [Location Types](../2-models-and-types/task.md#location-type-model)
+  - [ ] Purge ranged [Location Types](../2-models-and-types/task.md#location-type-model)
+- [ ] `/location/dimensions`: routes
+  - [ ] Get [Location Dimension](../2-models-and-types/task.md#location-dimension-model) List
+  - [ ] Get [Location Dimension](../2-models-and-types/task.md#location-dimension-model)
+  - [ ] Get ranged [Location Dimension](../2-models-and-types/task.md#location-dimension-model) List
+  - [ ] Get deleted [Location Dimension](../2-models-and-types/task.md#location-dimension-model) List
+  - [ ] Get ranged deleted [Location Dimension](../2-models-and-types/task.md#location-dimension-model) List
+  - [ ] Create [Location Dimension](../2-models-and-types/task.md#location-dimension-model)
+  - [ ] Put [Location Dimension](../2-models-and-types/task.md#location-dimension-model)
+  - [ ] Update [Location Dimension](../2-models-and-types/task.md#location-dimension-model)
+  - [ ] Delete [Location Dimension](../2-models-and-types/task.md#location-dimension-model)
+  - [ ] Delete ranged [Location Dimension](../2-models-and-types/task.md#location-dimension-model)
+  - [ ] Purge [Location Dimension](../2-models-and-types/task.md#location-dimension-model)
+  - [ ] Purge ranged [Location Dimension](../2-models-and-types/task.md#location-dimension-model)

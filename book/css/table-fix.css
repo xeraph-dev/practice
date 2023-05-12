@@ -1,3 +1,4 @@
+#common-fields-for-all-models + blockquote + .table-wrapper > table tr > *:first-child,
 #users-table + .table-wrapper > table tr > *:first-child,
 #characters-table + .table-wrapper > table tr > *:first-child,
 #character-species-table + .table-wrapper > table tr > *:first-child,
@@ -6,7 +7,9 @@
 #location-types-table + .table-wrapper > table tr > *:first-child,
 #location-dimensions-table + .table-wrapper > table tr > *:first-child,
 #episodes-table + .table-wrapper > table tr > *:first-child,
-#characters-episodes-table + .table-wrapper > table tr > *:first-child {
+#characters-episodes-table + .table-wrapper > table tr > *:first-child,
+#methods-table + .table-wrapper > table th:nth-child(2),
+#endpoint-types-table + .table-wrapper > table td {
   white-space: nowrap;
 }
 
