@@ -167,10 +167,10 @@ In SQL you can to filter with `WHERE`, `AND`, and `OR` keywords.
 
 #### Filtering Meta Type
 
-| Key    | Type      |
-| ------ | --------- |
-| **by** | `Integer` |
-| **q**  | `Integer` |
+| Key    | Type     |
+| ------ | -------- |
+| **by** | `String` |
+| **q**  | `String` |
 
 ### Range
 
